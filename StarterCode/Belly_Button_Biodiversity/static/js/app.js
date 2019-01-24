@@ -1,8 +1,27 @@
 function buildMetadata(sample) {
 
-  // @TODO: Complete the following function that builds the metadata panel
+  // Build the url
+  var url = "/metadata/" + sample
 
   // Use `d3.json` to fetch the metadata for a sample
+  d3.json(url).then(function(response) {
+
+    console.log(response);
+
+    var data = response;
+
+    var panel = d3.select("#sample-metadata");
+
+    panel.html("");
+
+    var list = panel.append("ul");
+    list.classed("list-unstyled", true);
+    console.log(Object.entries(data));
+    Object.entries(data).forEach(([key, value]) => {
+        var listItem = list.append("li");
+        listItem.text(`${key}: ${value}`);
+    });
+  });
     // Use d3 to select the panel with id of `#sample-metadata`
 
     // Use `.html("") to clear any existing metadata
@@ -17,8 +36,37 @@ function buildMetadata(sample) {
 
 function buildCharts(sample) {
 
+  // Build the url
+  var url = "/samples/" + sample
   // @TODO: Use `d3.json` to fetch the sample data for the plots
+  d3.json(url).then(function(response) {
+    console.log(response);
+    
+    trace1 = [{
+      x: response.otu_ids,
+      y: response.sample_values,
+      mode: "markers",
+      marker: {
+        size: response.sample_values,
+        color: response.otu_ids
+      },
+      text: response.otu_labels
+    }];
 
+    layout1 = {
+      title: "Bubble"
+      // xaxis: {
+      //   autorange: true,
+      //   type: "linear"
+      // },
+      // yaxis: {
+      //   autorange: true,
+      //   type: "linear"
+      // }
+    };
+    Plotly.newPlot("bubble", trace1, layout1);
+
+  });
     // @TODO: Build a Bubble Chart using the sample data
 
     // @TODO: Build a Pie Chart
